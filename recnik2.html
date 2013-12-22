@@ -1,0 +1,82 @@
+<html>
+	<head>
+		<title>Recnik po azbucen redosled</title>
+	<head>
+	<body>
+		<form>
+			Vnesi zbor:
+			<input type="text" value="cat" id="makedonskiZbor"/>
+			Prevedi zbor:
+			<input type="text" value="mace" id="angliskiZbor"/>
+		</form>
+		<form>
+			<input type="button" value="Vnesi vo tabela" onclick="prevedi();"/>
+		</form>	
+		<form>
+			<div id="mesto">
+		</form>	
+		<script>
+			function tabela1(){
+				document.write('<table border="1">');
+				for(var bukva = 97;bukva < 123;bukva++){	
+					document.write('<tr>');
+					document.write('<td>' + String.fromCharCode(bukva) + '</td>');	
+					for(var kol = 0;kol < 10;kol++){
+						var id = 'pole_' + String.fromCharCode(bukva) +'_' + kol;
+						var pole = '<td id="' + id + '">&nbsp</td>';
+						document.write(pole);
+					}
+					document.write('</tr>');
+					
+				}
+				document.write('</table>');
+			}
+			var prethodnoSnimeno = localStorage.snimenoto;
+			prevodi = prethodnoSnimeno ? JSON.parse(prethodnoSnimeno) : [];
+			
+			function prevedi(){
+				 var vnesenZbor = document.getElementById('makedonskiZbor').value;
+				 var prevedenZbor = document.getElementById('angliskiZbor').value;
+				 var prevod = {vneseniotZbor:vnesenZbor,prevedeniotZbor:prevedenZbor};
+				 prevodi.push(prevod);
+				 snimi();
+				 prikazi();
+			}
+
+			function snimi() {
+				localStorage.snimenoto = JSON.stringify(prevodi);
+			}
+
+			function htmlZaPrevod(pr, broj) {
+				var redica =  pr.vneseniotZbor + '-' + pr.prevedeniotZbor;
+				var brisiDugme = ' <button onclick="brisi(' + broj + ');">x</button>';					
+				return redica + brisiDugme;
+			}
+
+			function prikazi() {
+				var koloni = {};
+				for (var i = 0; i < prevodi.length; i++) {
+					var pr = prevodi[i];
+					proveri(pr, i, koloni);
+				}
+			}
+			
+			function proveri(pr, broj, koloni){
+				var bukva = pr.vneseniotZbor[0];
+				var kol = koloni[bukva] || 0;
+				koloni[bukva] = kol + 1;
+				document.getElementById('pole_'+bukva+'_'+kol).innerHTML = htmlZaPrevod(pr, broj);
+			}
+
+			function brisi(n) {
+				prevodi.splice(n,1);	
+				snimi();				
+				prikazi();
+			}
+
+		tabela1();
+		prikazi();
+		
+		</script>
+	</body>		
+</html>	

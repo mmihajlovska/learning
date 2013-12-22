@@ -1,0 +1,117 @@
+<html> 
+	<head>
+		<title>Memory</title>
+		<style>
+			button.d {
+			width:225px;
+			height:225px;
+			margin:1px;		
+			border-color:blue;
+			background:yellow;
+			color:red;
+			
+			}
+			
+		</style>
+	</head>
+	<body>
+		<script language="javascript">
+
+			function koePoleDaBrisi(pole){
+				var broj = pole.id[1];
+				if(broj == 1 || broj == 8){
+					brisi("prvo","osmo");
+	  		  	}else if(broj == 2 || broj == 4){
+   					brisi("vtoro","cetvrto");	
+  				}else if(broj == 3 || broj == 7){
+   					brisi("treto","sedmo");	
+  				}else if(broj == 5 || broj == 9 ){
+   					brisi("petto","deveto");	
+  				}else{
+  					brisi("sesto","deseto");	
+  				}
+			}
+	
+			function brisi(pole1,pole2){
+				document.getElementById(pole1).innerHTML = '';
+				document.getElementById(pole2).innerHTML = '';
+			}		
+			
+			var prethodno = null;
+			var vkupno = 0;
+			function klikna(dugme) {
+				var broj = dugme.id[1];
+  				var slika;
+  				if(broj == 1 || broj == 8){
+					slika=5;
+  				}else if(broj == 2 || broj == 4){
+   					slika=6;
+  				}else if(broj == 3 || broj == 7){
+   					slika=7;
+  				}else if(broj == 5 || broj == 9 ){
+   					slika=8;
+  				}else{
+  					slika=10;
+  				}	
+  				dugme.innerHTML='<img src="slika' + slika + '.jpeg">';
+   
+  				if (prethodno != null) {
+  					if (dugme.innerHTML == prethodno.innerHTML){
+						function iscezniSega(){
+							koePoleDaBrisi(dugme);	
+						}
+						setTimeout(iscezniSega,500);
+						vkupno = vkupno + 1;
+						if(vkupno == 5){
+							alert('Cestitki, ja pominavte stazata');
+							meni();						
+						} else {
+							function kraj() {
+					  			alert('Vi istece vremeto, obidete se povtorno');
+								restart();					  		}
+							setTimeout(kraj, 30000);
+						}
+  					} else {
+	  	    				var d2 = prethodno;
+  						var d1 = dugme;
+  	    					function zatvori() {
+					  	      d1.innerHTML='';
+					  	      d2.innerHTML='';
+					  	}
+  	    					setTimeout(zatvori, 500);
+				  	}
+						prethodno = null;	
+  				} else {
+    					prethodno = dugme;
+  				}
+			}
+		</script>
+<table align="center">
+<tr>
+	
+	<td id = "prvo"> <button id="b1"   class="d"  onclick="klikna(this)"> </button> </td>
+	<td id = "vtoro"> <button id="b2"   class="d"  onclick="klikna(this)"> </button> </td>
+	<td id = "treto"> <button id="b3"   class="d"  onclick="klikna(this)"> </button> </td>
+	<td id = "cetvrto"> <button id="b4"   class="d"  onclick="klikna(this)"> </button> </td>
+	<td id = "petto"> <button id="b5"   class="d"  onclick="klikna(this)"> </button> </td>
+</tr>
+<tr>
+	<td id = "sesto"> <button id="b6"   class="d"  onclick="klikna(this)"> </button> </td>
+	<td id = "sedmo"> <button id="b7"   class="d"  onclick="klikna(this)"> </button> </td>
+	<td id = "osmo"> <button id="b8"   class="d"  onclick="klikna(this)"> </button> </td>
+	<td id = "deveto"> <button id="b9"   class="d"  onclick="klikna(this)"> </button> </td>
+	<td id = "deseto"> <button id="b0"  class="d"  onclick="klikna(this)"> </button> </td>
+
+</tr></table>	
+        <div id="d1"></div>		
+	<div id="d2"></div>
+	<div id="d3"></div>
+	<div id="d4"></div>
+	<div id="d5"></div>		
+	<div id="d6"></div>
+	<div id="d7"></div>
+	<div id="d8"></div>
+	<div id="d9"></div>
+	<div id="d10"></div>			
+	</body>
+</html>

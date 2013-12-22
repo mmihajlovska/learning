@@ -1,0 +1,573 @@
+<html>
+		<canvas id="platno" width="440" height="440">
+		</canvas>
+		<canvas id="platno2" width="800" height="440">
+		</canvas>
+		<table border="2">
+			<tr>
+				<td><font color="blue">BLUE</font></td>
+				<td><font color="red">RED</font></td>
+			</tr>
+			<tr>
+				<td id="rezSini">2</td>
+				<td id="rezCrveni">2</td>	
+			</tr>
+		</table>
+		<script>
+var c = document.getElementById('platno');
+function klikna(e) {
+var x = e.clientX - 8; 
+var y = e.clientY - 8;
+var kol = Math.floor(x / 55);
+var red = Math.floor(y / 55);
+sinoIliCrveno(red, kol);
+}
+c.onmousedown = klikna;
+			
+			function nacrtaj(red, kol){
+				var ctx = c.getContext('2d');
+				if(polinja[red][kol] == 0){
+					nacrtajPravoagolnik(red, kol, ctx);
+				}else if(polinja[red][kol] == 1){
+					nacrtajPravoagolnik(red, kol, ctx);
+					nacrtajKrug(red, kol, ctx, 'blue', '#000099');
+				} else {
+					nacrtajPravoagolnik(red, kol, ctx);
+					nacrtajKrug(red, kol, ctx, 'red', '#880000');
+					
+				}
+			}
+
+			function nacrtajPravoagolnik(red, kol, ctx){
+				ctx.fillStyle = 'silver';
+				ctx.fillRect(kol * 55,  red * 55,  50 ,  50);
+			}
+			
+			function nacrtajKrug(red, kol, ctx, boja, granica){
+				ctx.beginPath();
+     				ctx.arc((kol * 55)+25,  (red * 55)+25,  23,  0,  2 * Math.PI);
+      				ctx.fillStyle = boja;
+      				ctx.fill();
+      				ctx.lineWidth = 4;
+      				ctx.strokeStyle = granica; 
+      				ctx.stroke();
+			}
+	
+			function vrti(){
+				for(var red = 0;red < 8;red++){
+					polinja[red] = [];
+					for(var kol = 0;kol < 8;kol++){
+						dajVrednost(red, kol);
+						nacrtaj(red, kol);
+					}
+				}
+			}
+			var boja = 1;
+			function sinoIliCrveno(red, kol){
+				if(polinja[red][kol] == 0){
+					if(boja == 1){
+						akoBojaESina(red,kol);
+					} else if(boja == 2){
+						akoBojaECrvena(red,kol);
+					}
+				}
+				vrednostiKraj(red, kol);
+			}
+			function akoBojaESina(red,kol){
+				if(moziDaMrdni()){
+					povikuvaSino(red, kol);
+					if(polinja[red][kol] == 1){
+						boja = 2;
+					}else{
+						boja = 1;
+					}
+					if(barajPraznoPole()){
+						if(!moziDaMrdni()){
+							alert('crvenite ne mozat da mrdnat, na red se sinite.');
+							boja = 1;
+							if(!moziDaMrdni()){
+							vrednostiZaglaviKraj(red,kol);
+							}
+						}
+					}
+				}
+			}
+			function akoBojaECrvena(red,kol){
+				if(moziDaMrdni()){
+					povikuvaCrveno(red, kol);
+					if(polinja[red][kol] == 2){
+						boja = 1;
+					}else{
+						boja = 2;
+					}
+					if(barajPraznoPole()){
+						if(!moziDaMrdni()){
+							alert('sinite ne mozat da mrdnat, na red se crvenite.');
+							boja = 2;
+							if(!moziDaMrdni()){
+								vrednostiZaglaviKraj(red,kol);
+							}
+						}
+					}
+				}
+			}
+			function barajPraznoPole(){
+				for(var redica = 0;redica < 8;redica++){
+					for(var kolona = 0;kolona < 8; kolona++){
+						if(polinja[redica][kolona] == 0){
+							return true;
+						}
+					}
+				}
+			}
+			
+			function moziDaMrdni(){
+				for(var redica = 0;redica < 8;redica++){
+					for(var kolona = 0;kolona < 8; kolona++){
+						if(polinja[redica][kolona] == 0){
+							if(boja == 1){
+								if(proverkaKoloni(redica,kolona,1,2) || proverkaRedici(redica,kolona,1,2) || proverkaDijagonali(redica,kolona,1,2)){
+									return true;
+								}
+							} else {
+								if(proverkaKoloni(redica,kolona,2,1) || proverkaRedici(redica,kolona,2,1) || proverkaDijagonali(redica,kolona,2,1)){
+									return true;
+								}
+							}
+						}			
+					}
+				}	
+			}
+			function povikuvaSino(red, kol){
+				redici(red, kol, 1, 2);
+				koloni(red, kol, 1, 2);
+				dijagonali(red, kol, 1, 2);
+				
+			}
+	
+			function povikuvaCrveno(red, kol){
+				redici(red, kol, 2, 1);
+				koloni(red, kol, 2, 1);
+				dijagonali(red, kol, 2, 1);
+			}
+
+			function vrednostiKraj(red, kol){
+				var c2 = document.getElementById('platno2');
+				var ctx2 = c2.getContext('2d');
+				var x = c2.width / 2;
+				var y = c2.height / 2;
+				ctx2.font = '30pt Calibri';
+				ctx2.textAlign = 'center';
+				ctx2.fillStyle = 'blue';
+				kraj(red, kol, ctx2, x, y);
+			}
+
+			function vrednostiZaglaviKraj(red,kol){
+				var c2 = document.getElementById('platno2');
+				var ctx2 = c2.getContext('2d');
+				var x = c2.width / 2;
+				var y = c2.height / 2;
+				ctx2.font = '30pt Calibri';
+				ctx2.textAlign = 'center';
+				ctx2.fillStyle = 'blue';
+				zaglaviKraj(red, kol, ctx2, x, y)
+			}
+			function kraj(red, kol, ctx2, x, y){
+				var brojSini = 0;
+				var brojCrveni = 0;
+				for(var red = 0; red < 8;red++){
+					for(var kol = 0; kol < 8;kol++){
+						if(polinja[red][kol] == 1){
+							brojSini++;
+						}else if(polinja[red][kol] == 2){
+							brojCrveni++;
+						}
+					}	
+				} 
+				document.getElementById('rezSini').innerHTML=brojSini;
+				document.getElementById('rezCrveni').innerHTML=brojCrveni;
+				proverkaZaPobeda(ctx2, x, y, brojSini, brojCrveni);
+			}
+			function zaglaviKraj(red, kol, ctx2, x, y){
+				var brojSini = 0;
+				var brojCrveni = 0;
+				for(var red = 0; red < 8;red++){
+					for(var kol = 0; kol < 8;kol++){
+						if(polinja[red][kol] == 1){
+							brojSini++;
+						}else if(polinja[red][kol] == 2){
+							brojCrveni++;
+						}
+					}	
+				} 
+				document.getElementById('rezSini').innerHTML=brojSini;
+				document.getElementById('rezCrveni').innerHTML=brojCrveni;
+				zaglaviPobeda(ctx2, x, y, brojSini, brojCrveni);
+			}
+			function proverkaZaPobeda(ctx2, x, y, brojSini, brojCrveni){
+				if(brojSini + brojCrveni == 64){
+					if(brojSini > brojCrveni){
+						ctx2.fillText('CONGRATULATION, BLUE WINS!',  x,  y);
+					} else if(brojSini < brojCrveni){
+						ctx2.fillText('CONGRATULATION, RED WINS!',  x,  y);
+					} else {
+						ctx2.fillText('DRAW',  x,  y);
+					}
+				} 
+			}
+			
+			function zaglaviPobeda(ctx2, x, y, brojSini, brojCrveni){
+				if(brojSini + brojCrveni < 64){
+					if(brojSini > brojCrveni){
+						ctx2.fillText('BLUE WINS!',  x,  y);
+					} else if((brojSini < brojCrveni)){
+						ctx2.fillText('RED WINS!',  x,  y);
+					}else {
+						ctx2.fillText('DRAW',  x,  y);
+					}
+				} 
+			}
+
+			function dajVrednost(red, kol){
+				if(red == 3 && kol == 3 || red == 4 && kol == 4){
+					polinja[red][kol] = 2;
+				} else if(red == 3 && kol == 4 || red == 4 && kol == 3){
+					polinja[red][kol] = 1;
+				} else {
+					polinja[red][kol] = 0;
+				}
+			}
+			
+			function redici(red, kol, boja1, boja2){
+				if(red == 0){
+					barajRedica(red, kol, 0, 8, 1, -1, boja1, boja2);
+				}else if(red == 7){
+					barajRedica(red, kol, 0, 8, -1, 1, boja1, boja2);
+				}else{
+					barajRedica(red, kol, 0, 8, 1, -1, boja1, boja2);
+					barajRedica(red, kol, 0, 8, -1, 1, boja1, boja2);
+				}
+			}
+			function proverkaRedici(redica,kolona,boja1,boja2){
+				var r;
+				if(redica == 0){
+					if(moziRedica(redica, kolona, 0, 8, 1, boja1, boja2)){
+						r = true;
+					}
+				}else if(redica == 7){
+					if(moziRedica(redica, kolona, 0, 8, -1, boja1, boja2)){
+						r = true;
+					}
+				}else{
+					if(moziRedica(redica, kolona, 0, 8, 1, boja1, boja2)){
+						r = true;
+					}
+					if(moziRedica(redica, kolona, 0, 8, -1, boja1, boja2)){
+						r = true;
+					}
+				}
+				if(r == true){
+					return true;
+				}
+			}
+			function koloni(red, kol, boja1, boja2){
+				if(kol == 0){
+					barajKolona(red, kol, 0, 8, 1, -1, boja1, boja2);
+				}else if(kol == 7){
+					barajKolona(red, kol, 0, 8, -1, 1, boja1, boja2);
+				}else{
+					barajKolona(red, kol, 0, 8, 1, -1, boja1, boja2);
+					barajKolona(red, kol, 0, 8, -1, 1, boja1, boja2);
+				}
+			}
+			
+			function proverkaKoloni(redica,kolona,boja1,boja2){
+				var k;
+				if(kolona == 0){
+					if(moziKolona(redica, kolona, 0, 8, 1, boja1, boja2)){
+						k = true;
+					}
+				}else if(kolona == 7){
+					if(moziKolona(redica, kolona, 0, 8, -1, boja1, boja2)){
+						k = true;
+					}
+				}else{
+					if(moziKolona(redica, kolona, 0, 8, 1, boja1, boja2)){
+						k = true;
+					}
+					if(moziKolona(redica, kolona, 0, 8, -1, boja1, boja2)){
+						k = true;
+					}
+				}
+				if(k == true){
+					return true;
+				}
+			}
+	
+			function dijagonali(red, kol, boja1, boja2){
+				if(red == 0 && kol == 0){
+					barajSporednaDijagonala(red, kol, 0, 8, 1, -1, boja1, boja2);
+				} else if(red == 7 && kol == 7){
+					barajSporednaDijagonala(red, kol, 0, 8, -1, 1, boja1, boja2);
+				}else if(red == 0 && kol == 7){
+					barajGlavnaDijagonala(red, kol, 0, 8, 1, -1, boja1, boja2);
+				} else if(red == 7 && kol == 0){
+					barajGlavnaDijagonala(red, kol, 0, 8, -1, 1, boja1, boja2);
+				} else if(red == 0){
+					barajSporednaDijagonala(red, kol, 0, 8, 1, -1, boja1, boja2);
+					barajGlavnaDijagonala(red, kol, 0, 8, 1, -1, boja1, boja2);
+				}else if(red == 7){
+					barajSporednaDijagonala(red, kol, 0, 8, -1, 1, boja1, boja2);
+					barajGlavnaDijagonala(red, kol, 0, 8, -1, 1, boja1, boja2);
+				}else if(kol == 0){
+					barajSporednaDijagonala(red, kol, 0, 8, 1, -1, boja1, boja2);
+					barajGlavnaDijagonala(red, kol, 0, 8, -1, 1, boja1, boja2);
+				}else if(kol == 7){
+					barajSporednaDijagonala(red, kol, 0, 8, -1, 1, boja1, boja2);
+					barajGlavnaDijagonala(red, kol, 0, 8, 1, -1, boja1, boja2);
+				}else{	
+					barajSporednaDijagonala(red, kol, 0, 8, 1, -1, boja1, boja2);
+					barajSporednaDijagonala(red, kol, 0, 8, -1, 1, boja1, boja2);
+					barajGlavnaDijagonala(red, kol, 0, 8, 1, -1, boja1, boja2);
+					barajGlavnaDijagonala(red, kol, 0, 8, -1, 1, boja1, boja2);
+				}
+			}
+			
+			function proverkaDijagonali(redica,kolona,boja1,boja2){
+				var sd;
+				var gd;	
+				if(redica == 0 && kolona == 0){
+					if(moziSporednaDijagonala(redica, kolona, 0, 8, 1, -1, boja1, boja2)){
+						sd = true;
+					}
+				} else if(redica == 7 && kolona == 7){
+					if(moziSporednaDijagonala(redica, kolona, 0, 8, -1, 1, boja1, boja2)){
+						sd = true;
+					}
+				}else if(redica == 0 && kolona == 7){
+					if(moziGlavnaDijagonala(redica, kolona, 0, 8, 1, -1, boja1, boja2)){
+						gd = true;
+					}
+				} else if(redica == 7 && kolona == 0){
+					if(moziGlavnaDijagonala(redica, kolona, 0, 8, -1, 1, boja1, boja2)){
+						gd = true;
+					}
+				} else if(redica == 0){
+					if(moziSporednaDijagonala(redica, kolona, 0, 8, 1, -1, boja1, boja2)){
+						sd = true;
+					}
+					if(moziGlavnaDijagonala(redica, kolona, 0, 8, 1, -1, boja1, boja2)){
+						gd = true;
+					}	
+				}else if(redica == 7){
+					if(moziSporednaDijagonala(redica, kolona, 0, 8, -1, 1, boja1, boja2)){
+						sd = true;
+					}
+					if(moziGlavnaDijagonala(redica, kolona, 0, 8, -1, 1, boja1, boja2)){
+						gd = true;
+					}
+				}else if(kolona == 0){
+					if(moziSporednaDijagonala(redica, kolona, 0, 8, 1, -1, boja1, boja2)){
+						sd = true;
+					}
+					if(moziGlavnaDijagonala(redica, kolona, 0, 8, -1, 1, boja1, boja2)){
+						gd = true;
+					}
+				}else if(kolona == 7){
+					if(moziSporednaDijagonala(redica, kolona, 0, 8, -1, 1, boja1, boja2)){
+						sd = true;
+					}
+					if(moziGlavnaDijagonala(redica, kolona, 0, 8, 1, -1, boja1, boja2)){
+						gd = true;
+					}
+				}else{	
+					if(moziSporednaDijagonala(redica, kolona, 0, 8, 1, -1, boja1, boja2)){
+						sd = true;
+					}
+					if(moziSporednaDijagonala(redica, kolona, 0, 8, -1, 1, boja1, boja2)){
+						sd = true;
+					}
+					if(moziGlavnaDijagonala(redica, kolona, 0, 8, 1, -1, boja1, boja2)){
+						gd = true;
+					}
+					if(moziGlavnaDijagonala(redica, kolona, 0, 8, -1, 1, boja1, boja2)){
+						gd = true;
+					}
+				}
+				if(sd == true || gd == true){
+					return true;
+				}
+			}
+				
+			function barajKolona(red, kol, broj1, broj2, b1, b2, boja1, boja2){
+				if(polinja[red][kol+b1] == boja2){
+					var k = kol + b1;
+					while(polinja[red][k] == boja2 && (k != 7 && k != 0)){
+						k+=b1;
+					}
+					polniKolona(red, kol, k, b2, boja1);
+				}else {
+					if(boja == 1){
+						boja = 2;
+					} else {
+						boja = 1;
+					}
+					
+				}
+			}
+			function polniKolona(red, kol, k, b2, boja1, kolona){
+				if(polinja[red][k] == boja1){
+					polinja[red][kol] = boja1;
+					nacrtaj(red, kol);
+					while(k != kol){
+						k+=b2;
+						polinja[red][k] = boja1;
+						nacrtaj(red, k);
+					}
+				} 
+			}
+
+			function barajRedica(red, kol, broj1, broj2, b1, b2, boja1, boja2){
+				if( polinja[red + b1][kol] == boja2){
+					var r = red + b1;
+					while(polinja[r][kol] == boja2 && (r != 7 && r != 0)){
+						r+=b1;
+					}
+					polniRedica(red, kol, r, b2, boja1);
+				}else {
+					if(boja == 1){
+						boja = 2;
+					} else {
+						boja = 1;
+					}
+				}			
+			}
+			
+			function polniRedica(red, kol, r, b2, boja1, redica){
+				if(polinja[r][kol] == boja1){
+					polinja[red][kol] = boja1;
+					nacrtaj(red, kol);
+					while(r != red){
+						r+=b2;
+						polinja[r][kol] = boja1;
+						nacrtaj(r, kol);
+					}
+				}
+			}
+			
+			function barajSporednaDijagonala(red, kol, broj1, broj2, b1, b2, boja1, boja2){
+				if( polinja[red + b1][kol+b1] == boja2){
+					var r = red + b1;
+					var k = kol + b1;
+					while(polinja[r][k] == boja2 && ((r != 7 && r != 0) && (k != 7 && k != 0))){
+						r+=b1;
+						k+=b1; 
+					}
+					polniSporednaDijagonala(red, kol, r, k, b2, boja1);
+				}else{
+					if(boja == 1){
+						boja = 2;
+					} else {
+						boja = 1;
+					}
+				} 	
+			}
+			
+			function polniSporednaDijagonala(red, kol, r, k, b2, boja1){
+				if(polinja[r][k] == boja1){
+					polinja[red][kol] = boja1;
+					nacrtaj(red, kol);
+					while((r != red) && (k != kol)){
+						k+= b2;
+						r+=b2;
+						polinja[r][k] = boja1;
+						nacrtaj(r, k);
+					}
+				}
+			}
+
+			function barajGlavnaDijagonala(red, kol, broj1, broj2, b1, b2, boja1, boja2){ 
+				if(polinja[red + b1][kol + b2] == boja2){
+					var r = red + b1;
+					var k = kol + b2;
+					while(polinja[r][k] == boja2 && ((r != 7 && r != 0) && (k != kol))){
+                                              	r+=b1;
+						k+= b2;
+					}
+					polniGlavnaDijagonala(red, kol, r, k, b1, b2, boja1);
+				}else{
+					if(boja == 1){
+						boja = 2;
+					} else {
+						boja = 1;
+					}
+				} 	
+			}	
+			function polniGlavnaDijagonala(red, kol, r, k, b1, b2, boja1){
+				if(polinja[r][k] == boja1){
+					polinja[red][kol] = boja1;
+					nacrtaj(red, kol);
+					while((r != red ) && (k != kol)){
+						r+=b2;
+						k+=b1;
+						polinja[r][k] = boja1;
+						nacrtaj(r, k);
+					}
+				}
+			}
+					
+			function moziRedica(red, kol, broj1, broj2, b1, boja1, boja2){
+				if(polinja[red+b1][kol] == boja2){
+					var r = red + b1;
+					while(polinja[r][kol] == boja2 && (r != 7 && r != 0)){
+						r+=b1;
+					}
+					if(polinja[r][kol] == boja1){
+						return true;
+					}
+				} 
+			}
+			function moziKolona(red, kol, broj1, broj2, b1, boja1, boja2){
+				if(polinja[red][kol+b1] == boja2){
+					var k = kol + b1;
+					while(polinja[red][k] == boja2 && (k != 7 && k != 0)){
+						k+=b1;
+					}
+					if(polinja[red][k] == boja1){
+						return true;
+					}
+				} 
+			}
+			function moziSporednaDijagonala(red, kol, broj1, broj2, b1, b2, boja1, boja2){
+				if( polinja[red + b1][kol+b1] == boja2){
+					var r = red + b1;
+					var k = kol + b1;
+					while(polinja[r][k] == boja2 && ((r != 7 && r != 0) && (k != 7 && k != 0))){
+						r+=b1;
+						k+=b1; 
+					}
+					if(polinja[r][k] == boja1){
+						return true;
+					}
+				}	
+
+			}
+			function moziGlavnaDijagonala(red, kol, broj1, broj2, b1, b2, boja1, boja2){
+				if(polinja[red + b1][kol + b2] == boja2){
+					var r = red + b1;
+					var k = kol + b2;
+					while(polinja[r][k] == boja2 && ((r != 7 && r != 0) && (k != kol))){
+                                              	r+=b1;
+						k+= b2;
+					}
+					if(polinja[r][k] == boja1){
+						return true;
+					}
+				}
+			}
+
+			polinja = [];
+			vrti();
+		</script>
+	</body>
+</html>

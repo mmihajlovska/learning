@@ -1,0 +1,78 @@
+<html>
+	<head>
+		<title>Recnik</title>
+	</head>
+	<body>
+		<form>
+			Vnesi zbor:
+			<input type="text" value="cat" id="angliski"/>
+			Prevedi zbor:
+			<input type="text" value="mace" id="makedonski"/>
+			<input type="button" value="snimi" onclick="dodaj();"/>	
+		</form>
+		<form>
+			<input type="text" value ="filter" id="filter"/>
+			<input type="button" value="baraj" onclick="filtrira();"/>
+		</form>	
+		<form>
+			<div id="pole">
+		</form>	
+		<script>
+			
+			var prethodnoSnimeno = localStorage.snimeno;
+
+			recnik = prethodnoSnimeno ? JSON.parse(prethodnoSnimeno) : [];
+
+			function dodaj(){
+				var vnesenZbor = document.getElementById('angliski').value;
+				var prevedenZbor = document.getElementById('makedonski').value;
+				var prevod = {vneseniotZbor:vnesenZbor,prevedeniotZbor:prevedenZbor};
+				recnik.push(prevod);
+				snimi();
+				prikazi();
+			}		
+			
+
+			function snimi() {
+				localStorage.snimeno = JSON.stringify(recnik);
+			}
+
+			function prikazi() {
+				var html = '';
+				for (var i=0; i < recnik.length; i++) {
+					var z = recnik[i];
+					if (z) {
+						var redica = z.vneseniotZbor + '-' + z.prevedeniotZbor;
+						var brisiDugme = ' <button onclick="brisi(' + i + ');">x</button>';					
+						html += '<p>' + redica + brisiDugme + '</p>';
+					}
+				}
+				document.getElementById('pole').innerHTML = html;
+			}
+					
+			function filtrira(){
+				var html ='';
+				var filter = document.getElementById('filter').value;
+				for(var i = 0; i < recnik.length; i++){
+					var z = recnik[i];
+					if (z) {
+						if(recnik[i].vneseniotZbor == filter || recnik[i].prevedeniotZbor == filter){
+							var redica = z.vneseniotZbor + '-' + z.prevedeniotZbor;
+							var brisiDugme = ' <button onclick="brisi(' + i + ');">x</button>';					
+							html = '<p>' + redica + brisiDugme + '</p>';
+							document.getElementById('pole').innerHTML = html;	
+						}
+					}
+				}
+			}
+
+			function brisi(n) {
+				delete recnik[n];
+				snimi();				
+				prikazi();
+			}
+			prikazi();
+			
+		</script>
+	</body>		
+</html>	

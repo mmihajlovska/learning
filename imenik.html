@@ -1,0 +1,96 @@
+<html>
+	<head>
+		<title>Telefonski imenik</title>
+	</head>
+	<body>
+		Vnesi ime:
+		<input type="text" id="i" value="Marina"/><br>
+		Vnesi prezime:
+		<input type="text" id="p" value = "Mihajlovska"/><br>
+		Vnesi broj:
+		<input type="text" id="b" value ="676543" /><br>
+		<input type="button" value = "snimi" onclick = "konstrukcija();"/>
+		</br>
+		Baraj po ime ili prezime:
+		<input type="text" id ="filter"/>
+		Baraj po broj:
+		<input type="text" id ="filterBr"/>
+		<input type="button" value = "ok" onclick = "filtrira();"/>
+
+<table border="1">
+<tr><th>ime</th><th>prezime</th><th>broj</th><th>b</th></tr>
+<tbody id="redicite"></tbody>
+</table>		
+		<script>
+			
+			var prethodnoSnimeno = localStorage.snimenoto;
+			imenik = prethodnoSnimeno ? JSON.parse(prethodnoSnimeno) : [];
+
+			function konstrukcija(){
+				var ime = val('i');
+				var prezime = val('p');
+				var broj = val('b');
+				
+				var podatoci = {imeto:ime || '?',prezimeto:prezime || '?',brojot:broj || '?'};
+				imenik.push(podatoci);
+				snimi();
+				precrtaj();
+			}
+			
+			function elem(id){
+				return document.getElementById(id);
+				
+			}
+			
+			function val(id){
+				return elem(id).value;
+			}
+
+			function snimi() {
+				localStorage.snimenoto = JSON.stringify(imenik);
+			}
+
+			function precrtaj() {
+				var html = '';
+				for (var i = 0; i < imenik.length; i++) {
+					var pr = imenik[i];
+					html += prikazi(i,pr);
+				}
+				elem('redicite').innerHTML = html;
+			}
+
+			function td(s) { 
+				return '<td>' + s + '</td>';
+			}
+
+			function prikazi(i,pr){
+				var brisiDugme = ' <button onclick="brisi(' + i + ');">x</button>';
+				return '<tr>' + td(pr.imeto) + td(pr.prezimeto)+ td(pr.brojot)+ td(brisiDugme) + '</tr>';
+			}
+		
+			function filtrira(){
+				elem('redicite').innerHTML = '';
+				var filter = val('filter');
+				var filterBroj = val('filterBr');
+				for(var j = 0; j < imenik.length;j++){
+					var pr = imenik[j];
+					var a = pr.prezimeto.substring(0,filter.length);
+					var b = pr.brojot.substring(0,filterBroj.length);
+					var c = pr.imeto.substring(0,filter.length);
+					if((a == filter || c == filter) && b == filterBroj){
+					elem('redicite').innerHTML += prikazi(j,pr);	
+					}
+				}
+			}
+
+			function brisi(n) {
+				imenik.splice(n,1);	
+				snimi();				
+				precrtaj();
+			}
+
+			precrtaj();
+
+		</script>
+	</body>
+</html>

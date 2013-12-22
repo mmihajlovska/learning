@@ -1,0 +1,531 @@
+<html>
+	<head>
+		<title>Tetris</title>
+
+		<style type = "text/css">
+			td.polno {
+
+				background-color:red;
+			}
+			td.prazno {
+
+				background-color:pink;
+			}
+			td.polno2 {
+
+				background-color:darkred;
+			}
+			h3{
+				color:blue;
+			}	
+		</style>	
+	</head>
+	<body>
+		<h3>INSTRUKCII: pukanje - ENTER, vrtenje figura: SPACE</h3>
+		<table border = "1" cellpadding = "10" cellspacing = "0">
+		
+		<script language = "javascript">
+			
+			function tabela(){
+				for(var red = 0; red < golemina; red++){
+					document.write('<tr>');
+					for(var kol = 0; kol < golemina; kol++){
+						var id = "pole_" + red + "_" + kol;
+						var pole = '<td id="' + id + '">&nbsp;</td>';
+						document.write(pole); 
+					}	
+					document.write('</tr>');
+				}
+			}
+
+			function popolni(red,kol){
+				var id = "pole_" + red + "_" + kol;
+				document.getElementById(id).className = 'polno';
+			}
+			
+			function isprazni(red,kol){
+				var id = "pole_" + red + "_" + kol;
+				document.getElementById(id).className = 'prazno';
+			}
+
+			function crtajFigura(koordinati){
+				for(var i = 0; i < koordinati.length; i++){
+					var koordinata = koordinati[i];				
+					popolni(tekovnaRedica + koordinata[0] , tekovnaKolona + koordinata[1]);
+				}
+			}
+			
+			function tocka(){
+				return [[0,0]];
+			}
+			
+			function skali(){
+				koordinatite = {
+					gore: [[0,0],[1,-1],[1,0],[1,1]],
+					desno: [[0,0],[1,0],[2,0],[1,1]],
+					dolu: [[0,0],[0,-1],[0,1],[1,0]],
+					levo: [[0,0],[1,0],[2,0],[1,-1]]
+				};
+				return koordinatite[nasoka];	
+			}
+			
+			function linija(){
+				if(nasoka == 'gore' || nasoka == 'dolu'){
+					return [[0,0],[0,-1],[0,1],[0,2]];
+				} else {
+					return [[0,0],[1,0],[2,0],[3,0]];
+				}				
+			}
+
+			function bukvaZ(){
+				if(nasoka == 'gore' || nasoka == 'dolu'){
+					return [[0,-1],[0,0],[1,0],[1,1]];
+				} else {
+					return [[0,1],[1,1],[1,0],[2,0]];
+				}
+			}
+			
+			function bukvaZObratna(){
+				if(nasoka == 'gore' || nasoka == 'dolu'){	
+					return [[0,1],[0,0],[1,0],[1,-1]];
+				} else {
+					return [[0,0],[1,0],[1,1],[2,1]];
+				}
+			}
+	
+			function bukvaG(){
+				if(nasoka == 'gore'){
+					return [[1,0],[1,-1],[1,1],[0,-1]];
+				} else if(nasoka == 'desno'){
+					return [[0,0],[0,1],[1,0],[2,0]];
+				} else if(nasoka == 'dolu'){
+					return [[0,0],[0,-1],[0,1],[1,1]];
+				} else {
+					return [[0,0],[1,0],[2,0],[2,-1]];
+				}
+			}
+
+			function bukvaGObratna(){
+				if(nasoka == 'gore'){
+					return [[1,0],[1,-1],[1,1],[0,1]];
+				} else if(nasoka == 'desno'){
+					return [[2,0],[1,0],[0,0],[2,1]];
+				} else if(nasoka == 'dolu'){
+					return [[0,0],[0,-1],[0,1],[1,-1]];
+				} else {
+					return [[0,0],[0,-1],[1,0],[2,0]];
+				}
+			}
+		
+			function kvadrat(){
+				return [[0,0],[0,1],[1,0],[1,1]];
+			}
+
+			function dveTocki(){
+				return [[0,0],[1,0]];
+			}	
+			
+			function voRedDaMrdni(red,kol){
+				var koordinati = tekovnaFigura();
+				for(var i = 0; i < koordinati.length; i++){
+					var redica = koordinati[i][0] + red + tekovnaRedica;
+					var kolona = koordinati[i][1] + kol + tekovnaKolona;
+					if(!moziDaMrdni(redica , kolona)){
+						return false;
+					}
+				}
+				return true;
+			}
+			
+			function zaglavi(){
+				var koordinati = tekovnaFigura();
+				for(var i = 0; i < koordinati.length; i++){
+					var redica = koordinati[i][0] + tekovnaRedica;
+					var kolona = koordinati[i][1] + tekovnaKolona;
+					popolneti[redica][kolona] = true;
+				}
+			}
+
+			function vmetniTocka(){
+				var koordinati = tocka();
+				var redica = koordinati[0][0] + tekovnaRedica;
+				var kolona = koordinati[0][1] + tekovnaKolona;
+				var i = golemina - 1;
+				while(i >= redica){
+					if(popolneti[i][kolona]){
+						i--;
+					} else {
+						popolneti[i][kolona] = true;
+						i = redica-1;
+					}
+				}
+			}
+
+			function puka(){
+				if(figura == 'dveTocki'){
+				var koordinati = dveTocki();
+				for(var i = 0; i < koordinati.length; i++){
+					var redica = koordinati[i][0] + tekovnaRedica;
+					var kolona = koordinati[i][1] + tekovnaKolona;
+				}
+				var j = redica+1;
+					while(!popolneti[j][kolona] && j < golemina){
+						j++;
+					}
+					if(popolneti[j][kolona]){
+						popolneti[j][kolona] = false;
+					}
+				}
+	
+			}
+
+			function nadolu(){
+				if(voRedDaMrdni(1,0)){
+					tekovnaRedica++;
+					precrtaj();
+					
+				} else if(tekovnaRedica > 0 ){
+					if(figura != 'tocka' && figura != 'dveTocki'){
+						zaglavi();
+						polnaLinija();
+						slednaFigura2();
+						slednaFigura();
+					} else if(figura == 'tocka'){
+						vmetniTocka();
+						polnaLinija();
+						slednaFigura2();
+						slednaFigura();
+					} else if(figura == 'dveTocki'){
+						slednaFigura2();
+						slednaFigura();
+					}
+				} else {
+					alert('kraj');
+					pocetok();
+				}
+					
+			}
+			
+			function levo(){
+				if(voRedDaMrdni(0,-1)){
+					tekovnaKolona--;
+					precrtaj();
+				}
+			}
+
+			function desno(){
+				if(voRedDaMrdni(0,1)){
+					tekovnaKolona++;
+					precrtaj();
+				}
+			}
+
+			function brisi(){
+				for(var red = 0; red < golemina; red++){
+					for(var kol = 0; kol < golemina; kol++){
+						isprazni(red , kol);
+					}
+				}
+			}
+			
+			function precrtaj(){
+				
+				brisi();
+				crtajFigura(tekovnaFigura());
+				crtajPopolneti();
+			}
+			
+			function svrti() {
+				if (nasoka == 'gore' && tekovnaRedica < golemina - 2) {
+					nasoka = 'desno';
+				} else if (nasoka == 'desno' && tekovnaKolona > 0) {
+					nasoka = 'dolu';
+				} else if (nasoka == 'dolu' && tekovnaRedica < golemina - 2) {
+					nasoka = 'levo';
+				} else if (nasoka == 'levo' && tekovnaKolona < golemina - 1) {
+					nasoka = 'gore';
+				}
+				precrtaj();
+			}
+
+			function pocetok(){
+				tekovnaRedica = 0;
+				tekovnaKolona = 5; 
+				nasoka = 'gore';
+				figura = 'skali';
+				popolneti = [];
+
+				for(var red = 0; red < golemina;red++){
+					var podniza = [];
+					for(var kol = 0; kol < golemina;kol++){
+						podniza[kol] = false;
+					}
+					popolneti[red] = podniza;
+				}
+				precrtaj();
+			}
+			
+			function tekovnaFigura(){
+				if(figura == 'skali'){
+					return skali();
+				} else if(figura == 'kvadrat'){	
+					return kvadrat();
+				} else if(figura == 'linija'){
+					return linija();	
+				} else if(figura == 'bukvaG'){
+					return bukvaG();
+				} else if(figura == 'bukvaZ'){
+					return bukvaZ();
+				} else if(figura == 'bukvaGObratna'){
+					return bukvaGObratna();
+				} else if(figura == 'bukvaZObratna'){
+					return bukvaZObratna();
+				} else if(figura == 'tocka'){
+					return tocka();
+				} else if(figura == 'dveTocki'){
+					return dveTocki();
+				}  
+			}
+			
+			function slednaFigura(){
+				nasoka = 'gore';
+				tekovnaRedica = 0;
+				tekovnaKolona = 5;
+				if(figura == 'skali'){
+					figura = 'kvadrat';
+				} else if(figura == 'kvadrat'){	
+					figura = 'linija';
+				} else if(figura == 'linija'){
+					figura = 'bukvaG';	
+				} else if(figura == 'bukvaG'){
+					figura = 'bukvaZ';
+				} else if(figura == 'bukvaZ'){
+					figura = 'bukvaGObratna';
+				} else if(figura == 'bukvaGObratna'){
+					figura = 'bukvaZObratna';
+				} else if(figura == 'bukvaZObratna'){
+					figura = 'tocka';	
+				} else if(figura == 'tocka'){
+				 	figura = 'dveTocki';
+				} else if(figura == 'dveTocki'){
+					figura = 'skali';
+				} 
+				precrtaj();
+			}
+				
+			function crtajPopolneti(){
+				for(var red = 0; red < golemina;red++){
+					for(var kol = 0; kol < golemina;kol++){
+						if(popolneti[red][kol]){
+							popolni(red , kol);
+						}
+					}
+				}
+
+			}
+			
+			function proba(){
+				
+				popolneti[3][4] = true;
+				precrtaj();
+			}
+
+			function polnaLinija(){
+				for(var red = 0; red < golemina; red++){
+					var polnRed = true;
+					for(var kol = 0; kol < golemina; kol++){
+						if(!popolneti[red][kol]){
+							polnRed = false;
+							break;
+						}						
+
+					}
+					if(polnRed){
+						izbrisiPoln(red);
+					}
+				}
+			}
+			
+			function izbrisiPoln(polniot){
+				for(var red = polniot;red > 0; red--){
+					for(var kol = 0; kol < golemina; kol++){
+						popolneti[red][kol] = popolneti[red-1][kol];
+					}
+				}
+			}
+
+			function moziDaMrdni(red , kol){
+				if(red >= 0 && kol >= 0 && red < golemina && kol < golemina && !popolneti[red][kol]){
+					return true;
+				} else {
+					return false;
+				}
+			}
+			
+			function pritisna(event) {
+				switch(event.keyCode){
+					case 40: 
+						nadolu();
+						break;
+					case 37:
+						levo();
+						break;
+					case 39:
+						desno();
+						break;
+					case 0:
+						svrti();
+						break;
+					case 13:
+					case 10:
+						puka();
+						break;
+				}
+			}
+		
+		golemina = 11;
+		tabela();
+		pocetok();
+		document.onkeypress = pritisna;
+		setInterval(nadolu,1000);
+
+		</script>
+		</table>
+		<table border ="1" cellpadding ="10">
+		<script language = "javascript">
+			
+			function tabela2(){
+				for(var red = 0; red < visina; red++){
+					document.write('<tr>');
+					for(var kol = 0; kol < sirina; kol++){
+						var id = "kocka_" + red + "_" + kol;
+						var kocka = '<td id="' + id + '">&nbsp;</td>';
+						document.write(kocka); 
+					}	
+					document.write('</tr>');
+				}
+			}
+			function popolni2(red,kol){
+				var id = "kocka_" + red + "_" + kol;
+				document.getElementById(id).className = 'polno2';
+			}
+			
+			function isprazni2(red,kol){
+				var id = "kocka_" + red + "_" + kol;
+				document.getElementById(id).className = 'prazno2';
+			}
+
+			function crtajFigura2(koordinati){
+				for(var i = 0; i < koordinati.length; i++){
+					var koordinata = koordinati[i];				
+					popolni2( koordinata[0] ,  koordinata[1]);
+				}
+			}
+			
+			function tocka2(){
+				crtajFigura2([[1,2]]);
+			}
+						
+			function skali2(){
+				crtajFigura2([[0,2],[1,1],[1,2],[1,3]]);
+			}
+			
+			function linija2(){
+				crtajFigura2([[1,0],[1,1],[1,2],[1,3]]);
+			}
+
+			function bukvaZ2(){
+				crtajFigura2([[0,1],[0,2],[1,2],[1,3]]);
+			}
+			
+			function bukvaZObratna2(){
+				crtajFigura2([[0,3],[0,2],[1,2],[1,1]]);
+			}
+	
+			function bukvaG2(){
+				crtajFigura2([[0,1],[1,1],[1,2],[1,3]]);
+			}
+
+			function bukvaGObratna2(){
+				crtajFigura2([[0,3],[1,3],[1,2],[1,1]]);
+			}
+		
+			function kvadrat2(){
+				crtajFigura2([[0,2],[0,3],[1,2],[1,3]]);
+			}
+
+			function dveTocki2(){
+				crtajFigura2([[0,2],[1,2]]);
+			}	
+
+			function slednaFigura2(){
+				if(figura2 == 'skali2'){
+					figura2 = 'kvadrat2';
+				} else if(figura2 == 'kvadrat2'){	
+					figura2 = 'linija2';
+				} else if(figura2 == 'linija2'){
+					figura2 = 'bukvaG2';	
+				} else if(figura2 == 'bukvaG2'){
+					figura2 = 'bukvaZ2';
+				} else if(figura2 == 'bukvaZ2'){
+					figura2 = 'bukvaGObratna2';
+				} else if(figura2 == 'bukvaGObratna2'){
+					figura2 = 'bukvaZObratna2';
+				} else if(figura2 == 'bukvaZObratna2'){
+					figura2 = 'tocka2';	
+				} else if(figura2 == 'tocka2'){
+				 	figura2 = 'dveTocki2';
+				} else if(figura2 == 'dveTocki2'){
+					figura2 = 'skali2';
+				} 
+				precrtaj2();
+			}
+			
+			function tekovnaFigura2(){
+				if(figura2 == 'skali2'){
+					skali2();
+				} else if(figura2 == 'kvadrat2'){	
+					kvadrat2();
+				} else if(figura2 == 'linija2'){
+					linija2();	
+				} else if(figura2 == 'bukvaG2'){
+					bukvaG2();
+				} else if(figura2 == 'bukvaZ2'){
+					bukvaZ2();
+				} else if(figura2 == 'bukvaGObratna2'){
+					bukvaGObratna2();
+				} else if(figura2 == 'bukvaZObratna2'){
+					bukvaZObratna2();
+				} else if(figura2 == 'tocka2'){
+					tocka2();
+				} else if(figura2 == 'dveTocki2'){
+					dveTocki2();
+				}  
+			}
+			
+			function brisi2(){
+				for(var red = 0; red < visina; red++){
+					for(var kol = 0; kol < sirina; kol++){
+						isprazni2(red , kol);
+					}
+				}
+			}
+			
+			function pocetok2(){
+				kvadrat2();
+			}
+	
+			function precrtaj2(){
+				brisi2();
+				tekovnaFigura2();
+			}
+			
+			figura2 = 'kvadrat2';	
+			sirina = 5;
+			visina = 3;
+			tabela2();
+			pocetok2();
+		</script>		
+		</table>
+	</body>
+</html>
