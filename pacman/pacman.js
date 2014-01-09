@@ -47,7 +47,6 @@ function moveDown() {
 		}
 		draw();
 	}
-	alert(points);
 }
 
 function moveUp() {
@@ -59,7 +58,6 @@ function moveUp() {
 		}
 		draw();
 	}
-	alert(points);
 }
 
 function moveLeft() {
@@ -72,7 +70,6 @@ function moveLeft() {
 		currentCol--;
 		draw();
 	}
-	alert(points);
 }
 
 function moveRight() {
@@ -84,7 +81,6 @@ function moveRight() {
 		currentCol++;
 		draw();
 	}
-	alert(points);
 }
 
 function pritisna(event) {
