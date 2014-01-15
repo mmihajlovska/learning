@@ -7,7 +7,6 @@ var ctx = c.getContext('2d');
 var c2 = document.getElementById('canvas2');
 var ctx2 = c2.getContext('2d');
 
-
 currentRow = 0;
 currentCol = 0;
 currentRowBad = 0;
@@ -47,7 +46,9 @@ function pushValueBlockade() {
 	for (var row = 0; row < 11; row++) {
 		var arr = [];
 		for (var col = 0; col < 11; col++) {
-			if (row % 2 == 0 && col % 2 != 0) {
+			if (((row >= 3 && row <= 7) && col == 2)
+					|| ((row >= 3 && row <= 7) && col == 8)
+					|| (row == 5 && col == 3) || (row == 5 && col == 7)) {
 				arr.push(true);
 			} else {
 				arr.push(false);
@@ -61,7 +62,7 @@ function pushValueCoins() {
 	for (var row = 0; row < 11; row++) {
 		var arr = [];
 		for (var col = 0; col < 11; col++) {
-			if (row % 2 != 0 && col % 2 == 0) {
+			if (!blockade[row][col]) {
 				arr.push(true);
 			} else {
 				arr.push(false);
@@ -82,13 +83,40 @@ function coinsTrue(row, col) {
 
 function blockadeTrue(row, col) {
 	if (blockade[row][col]) {
-		var x = (row * 50) + 15;
-		var y = (col * 50) + 15;
-		ctx.fillStyle = 'blue';
-		ctx.fillRect(row * 50, col * 50, 50, 50);
+		if (row == 3) {
+			drawHalfCircle(row, col,0.5,1.5);
+			drawRectangle(row + 25, col, 25, 50);
+		} else if (row == 4) {
+			drawRectangle(row, col, -25, 50);
+			drawRectangle(row, col, 50, 50);
+		} else if (row == 7) {
+			drawHalfCircle(row, col,1.5,0.5);
+			drawRectangle(row, col, 25, 50);
+		} else if (row == 5 && col == 3) {
+			drawHalfCircle(row, col,0,1);
+			drawRectangle(row, col, 50, 25);
+		} else if (row == 5 && col == 7	) {
+			drawHalfCircle(row, col,1,0);
+		} else if(col == 8 && row == 5){
+			drawRectangle(row, col, 50, -25);
+			drawRectangle(row, col, 50, 50);
+		} else {
+			drawRectangle(row, col, 50, 50);
+		}
 	}
 }
 
+function drawHalfCircle(row, col,x,y) {
+	ctx.beginPath();
+	ctx.fillStyle = 'blue';
+	ctx.arc(row * 50 + 25, col * 50 + 25, 25, x* Math.PI, y * Math.PI);
+	ctx.fill();
+}
+
+function drawRectangle(row, col, width, height) {
+	ctx.fillStyle = 'blue';
+	ctx.fillRect(row * 50, col * 50, width, height);
+}
 function draw() {
 
 	ctx.clearRect(0, 0, c.width, c.height);
@@ -98,26 +126,24 @@ function draw() {
 			ctx.fillStyle = 'black';
 			ctx.fillRect(row * 50, col * 50, 50, 50);
 
-			coinsTrue(row, col);
 			blockadeTrue(row, col);
+			coinsTrue(row, col);
+
 		}
 	}
 
 	howIsRotate();
 	ctx.drawImage(imgbad1, currentColBad * 50, currentRowBad * 50, 50, 50);
 }
-var lives = 3;
+
 function live() {
 	if (currentCol == currentColBad && currentRow == currentRowBad) {
 		if (lives > 0) {
 			lives--;
 		} else {
-			var x = c2.width / 2;
-			var y = c2.height / 2;
-			ctx2.font = '30pt Calibri';
-			ctx2.textAlign = 'center';
-			ctx2.fillStyle = 'red';
-			ctx2.fillText('TRY AGAIN!',  x,  y);
+			ctx2.clearRect(0,0,c2.width,c2.height);	
+			drawForTheEnd('TRY AGAIN!');
+			start();
 		}
 	}
 }
@@ -130,13 +156,18 @@ function win() {
 			}
 		}
 	}
-	
+	ctx2.clearRect(0,0,c2.width,c2.height);
+	drawForTheEnd('YOU WIN!');
+	start();
+}
+
+function drawForTheEnd(end) {
 	var x = c2.width / 2;
 	var y = c2.height / 2;
 	ctx2.font = '30pt Calibri';
 	ctx2.textAlign = 'center';
 	ctx2.fillStyle = 'red';
-	ctx2.fillText('YOU WIN!',  x,  y);
+	ctx2.fillText(end, x, y);
 }
 
 function canMoveBad(nb1, nb2) {
@@ -186,10 +217,12 @@ function afterMoved() {
 	if (coins[currentCol][currentRow]) {
 		coins[currentCol][currentRow] = false;
 		points++;
+		ctx2.clearRect(0,0,c2.width,c2.height);
+		drawForTheEnd('POINTS: ' +points);
 	}
 	draw();
 	win();
-	
+
 }
 
 function moveDown() {
@@ -240,12 +273,25 @@ function pritisna(event) {
 		break;
 	}
 }
+function start() {
+	currentRow = 0;
+	currentCol = 0;
+	currentRowBad = 0;
+	currentColBad = 10;
+	coins = [];
+	points = 0;
+	pravec = 'r';
+	blockade = [];
+	lives = 3;
 
-pushValueCoins();
-pushValueBlockade();
-draw();
-document.onkeypress = pritisna;
+	pushValueBlockade();
+	pushValueCoins();
+	draw();
+	document.onkeypress = pritisna;
+
+}
+start();
+setInterval(moveBad, 500);
 $('#pacman').hide();
 $('#coin').hide();
 $('#bad1').hide();
-setInterval(moveBad, 500);
