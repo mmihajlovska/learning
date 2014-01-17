@@ -2,6 +2,7 @@ var imgPacman = document.getElementById("pacman");
 var imgCoin = document.getElementById("coin");
 var imgbad1 = document.getElementById("bad1");
 var imgbad2 = document.getElementById("bad2");
+var imgIceCream = document.getElementById("iceCream");
 var c = document.getElementById('canvas');
 var ctx = c.getContext('2d');
 var c2 = document.getElementById('canvas2');
@@ -15,6 +16,7 @@ coins = [];
 points = 0;
 pravec = 'r';
 blockade = [];
+angle1 = 0;
 
 function rotate(angle, x, y) {
 	ctx.save();
@@ -84,20 +86,20 @@ function coinsTrue(row, col) {
 function blockadeTrue(row, col) {
 	if (blockade[row][col]) {
 		if (row == 3) {
-			drawHalfCircle(row, col,0.5,1.5);
+			drawHalfCircle(row, col, 0.5, 1.5);
 			drawRectangle(row + 25, col, 25, 50);
 		} else if (row == 4) {
 			drawRectangle(row, col, -25, 50);
 			drawRectangle(row, col, 50, 50);
 		} else if (row == 7) {
-			drawHalfCircle(row, col,1.5,0.5);
+			drawHalfCircle(row, col, 1.5, 0.5);
 			drawRectangle(row, col, 25, 50);
 		} else if (row == 5 && col == 3) {
-			drawHalfCircle(row, col,0,1);
+			drawHalfCircle(row, col, 0, 1);
 			drawRectangle(row, col, 50, 25);
-		} else if (row == 5 && col == 7	) {
-			drawHalfCircle(row, col,1,0);
-		} else if(col == 8 && row == 5){
+		} else if (row == 5 && col == 7) {
+			drawHalfCircle(row, col, 1, 0);
+		} else if (col == 8 && row == 5) {
 			drawRectangle(row, col, 50, -25);
 			drawRectangle(row, col, 50, 50);
 		} else {
@@ -106,10 +108,10 @@ function blockadeTrue(row, col) {
 	}
 }
 
-function drawHalfCircle(row, col,x,y) {
+function drawHalfCircle(row, col, x, y) {
 	ctx.beginPath();
 	ctx.fillStyle = 'blue';
-	ctx.arc(row * 50 + 25, col * 50 + 25, 25, x* Math.PI, y * Math.PI);
+	ctx.arc(row * 50 + 25, col * 50 + 25, 25, x * Math.PI, y * Math.PI);
 	ctx.fill();
 }
 
@@ -117,8 +119,8 @@ function drawRectangle(row, col, width, height) {
 	ctx.fillStyle = 'blue';
 	ctx.fillRect(row * 50, col * 50, width, height);
 }
-function draw() {
 
+function draw() {
 	ctx.clearRect(0, 0, c.width, c.height);
 
 	for (var row = 0; row < 11; row++) {
@@ -138,10 +140,10 @@ function draw() {
 
 function live() {
 	if (currentCol == currentColBad && currentRow == currentRowBad) {
-		if (lives > 0) {
-			lives--;
+		if (lifes > 0) {
+			lifes--;
 		} else {
-			ctx2.clearRect(0,0,c2.width,c2.height);	
+			ctx2.clearRect(0, 0, c2.width, c2.height);
 			drawForTheEnd('TRY AGAIN!');
 			start();
 		}
@@ -156,16 +158,16 @@ function win() {
 			}
 		}
 	}
-	ctx2.clearRect(0,0,c2.width,c2.height);
+	ctx2.clearRect(0, 0, c2.width, c2.height);
 	drawForTheEnd('YOU WIN!');
 	start();
 }
 
-function drawForTheEnd(end) {
+function drawForTheEnd(end, where) {
 	var x = c2.width / 2;
 	var y = c2.height / 2;
 	ctx2.font = '30pt Calibri';
-	ctx2.textAlign = 'center';
+	ctx2.textAlign = where;
 	ctx2.fillStyle = 'red';
 	ctx2.fillText(end, x, y);
 }
@@ -217,8 +219,12 @@ function afterMoved() {
 	if (coins[currentCol][currentRow]) {
 		coins[currentCol][currentRow] = false;
 		points++;
-		ctx2.clearRect(0,0,c2.width,c2.height);
-		drawForTheEnd('POINTS: ' +points);
+		ctx2.clearRect(0, 0, c2.width, c2.height);
+		drawForTheEnd('POINTS: ' + points);
+	}
+	if (currentRow == 1 && currentCol == 5) {
+		lifes++;
+		draw();
 	}
 	draw();
 	win();
@@ -282,7 +288,8 @@ function start() {
 	points = 0;
 	pravec = 'r';
 	blockade = [];
-	lives = 3;
+	lifes = 3;
+	
 
 	pushValueBlockade();
 	pushValueCoins();
@@ -290,8 +297,31 @@ function start() {
 	document.onkeypress = pritisna;
 
 }
+function rotateLife() {
+	angle1 += 25;
+	ctx.save();
+	ctx.translate(175, 275);
+	ctx.rotate(angle1 * Math.PI / 180);
+	ctx.drawImage(imgPacman, -15, -15, 30, 30);
+	ctx.restore();
+}
+
+function rotateIceCream() {
+	angle1 += 25;
+	ctx.save();
+	ctx.translate(375, 275);
+	ctx.rotate(angle1 * Math.PI / 180);
+	ctx.drawImage(imgIceCream, -25, -25, 50, 50);
+	ctx.restore();
+}
+
+
 start();
 setInterval(moveBad, 500);
 $('#pacman').hide();
 $('#coin').hide();
 $('#bad1').hide();
+$('#iceCream').hide();
+
+setInterval(rotateLife, 500);
+setInterval(rotateIceCream, 500);
