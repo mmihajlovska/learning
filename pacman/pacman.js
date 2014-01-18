@@ -1,7 +1,6 @@
 var imgPacman = document.getElementById("pacman");
 var imgCoin = document.getElementById("coin");
 var imgbad1 = document.getElementById("bad1");
-var imgbad2 = document.getElementById("bad2");
 var imgIceCream = document.getElementById("iceCream");
 var c = document.getElementById('canvas');
 var ctx = c.getContext('2d');
@@ -17,6 +16,7 @@ points = 0;
 pravec = 'r';
 blockade = [];
 angle1 = 0;
+time = 60;
 
 function rotate(angle, x, y) {
 	ctx.save();
@@ -25,6 +25,16 @@ function rotate(angle, x, y) {
 	ctx.drawImage(imgPacman, x, y, 40, 40);
 	ctx.restore();
 }
+
+function timer() {
+	if (time > 0) {
+		drawForTheEnd('TIME: ' + time);
+		time--;
+	} else {
+		drawForTheEnd('GAME OVER');
+	}
+}
+
 function pravecRotate(a, b, c, d) {
 	if (pravec == 'r') {
 		rotate(0, a, b);
@@ -73,6 +83,8 @@ function pushValueCoins() {
 		coins.push(arr);
 	}
 	coins[0][0] = false;
+	coins[3][5] = false;
+	coins[7][5] = false;
 }
 
 function coinsTrue(row, col) {
@@ -138,13 +150,13 @@ function draw() {
 	ctx.drawImage(imgbad1, currentColBad * 50, currentRowBad * 50, 50, 50);
 }
 
-function live() {
+function life() {
 	if (currentCol == currentColBad && currentRow == currentRowBad) {
 		if (lifes > 0) {
 			lifes--;
 		} else {
 			ctx2.clearRect(0, 0, c2.width, c2.height);
-			drawForTheEnd('TRY AGAIN!');
+			drawForTheEnd('GAME OVER!');
 			start();
 		}
 	}
@@ -163,17 +175,27 @@ function win() {
 	start();
 }
 
-function drawForTheEnd(end, where) {
+function drawForTheEnd(end) {
+	ctx2.clearRect(0, 0, c2.width, c2.height);
 	var x = c2.width / 2;
 	var y = c2.height / 2;
+	ctx2.fillStyle = 'black';
+	ctx2.fillRect(0, 0, 80, 50);
+	ctx2.fillRect(52, 0, 80, 50);
+	ctx2.drawImage(imgPacman, 10, 10, 30, 30);
+	ctx2.fillRect(205, 0, 80, 50);
+	ctx2.fillRect(257, 0, 80, 50);
+	ctx2.drawImage(imgCoin, 215, 10, 30, 30);
 	ctx2.font = '30pt Calibri';
-	ctx2.textAlign = where;
+	ctx2.textAlign = 'center';
 	ctx2.fillStyle = 'red';
+	ctx2.fillText(lifes, 65, 40);
+	ctx2.fillText(points, 275, 40);
 	ctx2.fillText(end, x, y);
 }
 
 function canMoveBad(nb1, nb2) {
-	if (!blockade[currentColBad + nb1][currentRowBad + nb2]) {
+	if (!blockade[currentColBad + nb1][currentRowBad + nb2]){
 		return true;
 	}
 }
@@ -188,13 +210,13 @@ function checkRowBad() {
 		if (canMoveBad(0, 1)) {
 			currentRowBad++;
 			draw();
-			live();
+			life();
 		}
 	} else if (currentRow < currentRowBad && currentRowBad > 0) {
 		if (canMoveBad(0, -1)) {
 			currentRowBad--;
 			draw();
-			live();
+			life();
 		}
 	}
 }
@@ -204,13 +226,13 @@ function checkColBad() {
 		if (canMoveBad(1, 0)) {
 			currentColBad++;
 			draw();
-			live();
+			life();
 		}
 	} else if (currentCol < currentColBad && currentColBad > 0) {
 		if (canMoveBad(-1, 0)) {
 			currentColBad--;
 			draw();
-			live();
+			life();
 		}
 	}
 }
@@ -219,8 +241,6 @@ function afterMoved() {
 	if (coins[currentCol][currentRow]) {
 		coins[currentCol][currentRow] = false;
 		points++;
-		ctx2.clearRect(0, 0, c2.width, c2.height);
-		drawForTheEnd('POINTS: ' + points);
 	}
 	if (currentRow == 1 && currentCol == 5) {
 		lifes++;
@@ -280,6 +300,7 @@ function pritisna(event) {
 	}
 }
 function start() {
+	
 	currentRow = 0;
 	currentCol = 0;
 	currentRowBad = 0;
@@ -289,7 +310,7 @@ function start() {
 	pravec = 'r';
 	blockade = [];
 	lifes = 3;
-	
+	time = 30;
 
 	pushValueBlockade();
 	pushValueCoins();
@@ -315,7 +336,6 @@ function rotateIceCream() {
 	ctx.restore();
 }
 
-
 start();
 setInterval(moveBad, 500);
 $('#pacman').hide();
@@ -323,5 +343,6 @@ $('#coin').hide();
 $('#bad1').hide();
 $('#iceCream').hide();
 
+setInterval(timer, 1000);
 setInterval(rotateLife, 500);
 setInterval(rotateIceCream, 500);
