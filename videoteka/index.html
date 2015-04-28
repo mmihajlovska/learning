@@ -1,0 +1,164 @@
+<html>
+	<head>
+		<title>Videoteka</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
+		
+		<!-- SLIDER-->
+		<link href="themes/1/js-image-slider.css" rel="stylesheet" type="text/css" />
+		<script src="themes/1/js-image-slider.js" type="text/javascript"></script>
+		<link href="generic.css" rel="stylesheet" type="text/css" />
+		
+		
+		
+	<style>
+		.click-nav {margin:6px auto;width:180px;}
+.click-nav ul {position:relative;font-weight:900;}
+.click-nav ul li {position:relative;list-style:none;cursor:pointer;}
+.click-nav ul li ul {position:absolute;left:0;right:0;}
+.click-nav ul .clicker {position:relative;background:#2284B5;color:#FFF;}
+.click-nav ul .clicker:hover,.click-nav ul .active {background:#196F9A;}
+.click-nav ul li a {transition:background-color 0.2s ease-in-out;-webkit-transition:background-color 0.2s ease-in-out;
+-moz-transition:background-color 0.2s ease-in-out;display:block;padding:8px 10px 8px 30px;background:#FFF;color:#333;text-decoration:none;}
+.click-nav ul li a:hover {background:#F2F2F2;}
+/* Fallbacks */
+.click-nav .no-js ul {display:none;}
+.click-nav .no-js:hover ul {display:block;}
+
+
+	</style>
+	</head>
+	<body>
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+		<link href="bootstrap.css" rel="stylesheet">
+		
+	<nav class="navbar navbar-default" role="navigation">
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse"
+				data-target="#bs-example-navbar-collapse-1">
+				<span class="sr-only">Toggle navigation</span> <span
+					class="icon-bar"></span> <span class="icon-bar"></span> <span
+					class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="#">Todos</a>
+		</div>
+
+		<!-- Collect the nav links, forms, and other content for toggling -->
+		<div class="collapse navbar-collapse"
+			id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="#">Home</a></li>
+				
+				<li><a href="about.html">About</a></li>
+				<li>
+				<div class="click-nav">
+  <ul class="no-js">
+    <li>
+      <a href="#" class="clicker">Menu<span class="glyphicon glyphicon-hand-down"></span></a>
+      <ul>
+        <li class="prvo" onclick="user();"><a href="#">Users</a></li>
+        <li class="vtoro" onclick="movie();"><a href="#">Movies</a></li>
+      </ul>
+    </li>
+  </ul>
+</div>
+</li>
+			</ul>
+		</div>
+		<!-- /.navbar-collapse -->
+	</nav>
+		
+		<!--<div id="pocetna">
+		<button type="button" class="btn btn-primary" onclick="user()">Users</button>
+		<button type="button" class="btn btn-primary" onclick="movie()">Movies</button><p></p>
+		</div>-->
+		
+		
+		
+		<!--SLIDER-->
+	<h1 align="center" id="title"><font color="blue">New movies</font></h1>	
+    <div id="sliderFrame">
+        <div id="slider">
+            <img class="a" src="images/image-slider-1.jpg" />
+            <img src="images/image-slider-2.jpg" />
+            <img src="images/image-slider-3.jpg" />
+			<img src="images/image-slider-4.jpg" />
+            <img src="images/image-slider-5.jpg" />
+        </div>
+        <div id="htmlcaption" style="display: none;">
+            <em>HTML</em> caption. Link to <a href="http://www.google.com/">Google</a>.
+        </div>
+    </div>
+		<div id="formUser">
+			<form role="form">
+				<div class="col-xs-2">
+					<b>First name</b>
+					<input type="text" class="form-control" id="imeKorisnici"><p></p>
+					<b>Last name</b>
+					<input type="text" class="form-control" id="prezimeKorisnici"><p></p>
+					<b>Date of birth</b>
+					<input type="text" class="form-control" id="dataNaRaganje"><p></p>
+					<b>Tel</b>
+					<input type="text" class="form-control" id="tel"><p></p>
+					<button type="button" id="submitUser" class="btn btn-danger" onclick="add();">Submit</button><p></p>
+					<button type="button" id="renameUser" class="btn btn-danger">Rename</button><p></p>
+				</div>
+			</form>
+		</div>
+		<div id="user">
+		<table class="table table-hover">
+			<tr><th>First name</th><th>Last name</th><th>Date of birth</th><th>Tel</th></tr>
+			<tbody id="rediciteK"></tbody>
+		</table>
+		
+		<div class="col-xs-2">
+		<input id="prebaruvajKorisnik" type="text" class="form-control" value="search"/>
+		</div>
+		<input type="button" class="btn btn-warning" value="Search" onclick="searchUser();"/>
+		<input type="button" class="btn btn-danger" value="Add user" onclick="newUser();"/>
+		</div>
+		
+		
+		<div id="formMovie">
+			<form role="form">
+				<div class="col-xs-2">
+					<b>Movie</b>
+					<input type="text" class="form-control" id="imeFilmovi"><p></p>
+					<b>Year</b>
+					<input type="text" class="form-control" id="god"><p></p>
+					<button type="button" id="submitMovie" class="btn btn-danger" onclick="add();">Submit</button><p></p>
+					<button type="button" id="renameMovie" class="btn btn-danger">Rename</button><p></p>
+				</div>
+			</form>
+		</div>
+		<table class="table table-hover" id="rMov">
+			<tr><th>Rented movies</th><th>Date on renting</th><th>Date on returning</th></tr>
+			<tbody id="rentedMovies"></tbody>
+		</table>
+		<button id="back" class="btn btn-success">Back</button>
+		
+		<div id="movie">
+		<table id = "table" class="table table-hover">
+			<tr><th>Movie</th><th>Year</th><th>Rented from</th></tr>
+			<tbody id="rediciteF"></tbody>
+		</table>
+		
+		
+		
+		<div class="col-xs-2">
+		<input id="prebaruvajFilm" type="text"  class="form-control" value="search"/>
+		</div>
+		<input type="button" class="btn btn-warning" value="Search" onclick="searchMovie();"/>
+		<input type="button" class="btn btn-danger" value="Add movie" onclick="newMovie();"/>
+		</div>
+		<script src="jquery.js"></script>
+		<script src="videoteka.js"></script>
+	</body>
+</html>
