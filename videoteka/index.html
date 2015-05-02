@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>Videoteka</title>
+<title>Cinema</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!-- Latest compiled and minified CSS -->
@@ -100,26 +100,25 @@
 					class="icon-bar"></span> <span class="icon-bar"></span> <span
 					class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="#" onclick="hideStart();">Videoteka</a>
+			<a class="navbar-brand" href="#" onclick="hideStart();">Cinema</a>
 		</div>
 
 
 		<!-- Collect the nav links, forms, and other content for toggling -->
 		<ul class="nav navbar-nav">
-			<li class="prvo" onclick="user();"><a href="#">Users</a></li>
-			<li class="vtoro" onclick="movie();"><a href="#">Movies</a></li>
+			<li onclick="user();"><a href="#">Users</a></li>
+			<li onclick="movie();"><a href="#">Movies</a></li>
 		</ul>
 
-
-		<!-- search button -->
+		<!-- search form -->
 		<div class="searchFormUser">
 			<button type="button" class="btn btn-warning btn-circle">
 				<i class="glyphicon glyphicon-search" onclick="searchUser();"></i>
 			</button>
 			<div class="navbar-form navbar-right hidden-xs">
 				<div class="searchform">
-					<input id="prebaruvajKorisnik" class="form-control" type="text"
-						value="" name="s" placeholder="Search">
+					<input id="searchU" class="form-control" type="text" value=""
+						name="s" placeholder="Search">
 				</div>
 			</div>
 		</div>
@@ -129,14 +128,14 @@
 			</button>
 			<div class="navbar-form navbar-right hidden-xs">
 				<div class="searchform">
-					<input id="prebaruvajFilm" class="form-control" type="text"
-						value="" name="s" placeholder="Search">
+					<input id="searchM" class="form-control" type="text" value=""
+						name="s" placeholder="Search">
 				</div>
 			</div>
 		</div>
 	</nav>
 
-	<h1 align="center" id="title">
+	<h1 align="center" id="heading">
 		<font color="blue">New movies</font>
 	</h1>
 
@@ -157,13 +156,13 @@
 		<form role="form">
 			<div class="col-xs-2">
 				<b>First name</b> <input type="text" class="form-control"
-					id="imeKorisnici">
+					id="firstName">
 				<p></p>
 				<b>Last name</b> <input type="text" class="form-control"
-					id="prezimeKorisnici">
+					id="lastName">
 				<p></p>
 				<b>Date of birth</b> <input type="text" class="form-control"
-					id="dataNaRaganje">
+					id="dateOfBirth">
 				<p></p>
 				<b>Tel</b> <input type="text" class="form-control" id="tel">
 				<p></p>
@@ -183,7 +182,7 @@
 				<th>Date of birth</th>
 				<th>Tel</th>
 			</tr>
-			<tbody id="rediciteK"></tbody>
+			<tbody id="userRows"></tbody>
 		</table>
 
 		<input type="button" class="btn btn-danger" value="Add user"
@@ -194,9 +193,9 @@
 	<div id="formMovie">
 		<form role="form">
 			<div class="col-xs-2">
-				<b>Movie</b> <input type="text" class="form-control" id="imeFilmovi">
+				<b>Movie</b> <input type="text" class="form-control" id="title">
 				<p></p>
-				<b>Year</b> <input type="text" class="form-control" id="god">
+				<b>Year</b> <input type="text" class="form-control" id="year">
 				<p></p>
 				<button type="button" id="submitMovie" class="btn btn-danger"
 					onclick="add();">Submit</button>
@@ -223,7 +222,7 @@
 				<th>Year</th>
 				<th>Rented from</th>
 			</tr>
-			<tbody id="rediciteF"></tbody>
+			<tbody id="movieRows"></tbody>
 		</table>
 		<input type="button" class="btn btn-danger" value="Add movie"
 			onclick="newMovie();" />

@@ -1,15 +1,15 @@
 var lSub = localStorage.lastSubmit;
 model = lSub ? JSON.parse(lSub) : {
 	users : [ {
-		ime : 'Marina',
-		prezime : 'Mihajlovska',
-		data : '15.07.86',
+		firstName : 'Marina',
+		lastName : 'Mihajlovska',
+		date : '15.07.86',
 		tel : '908',
 		rentedMovies : []
 	} ],
 	movies : [ {
-		ime : 'Rambo',
-		god : '1900',
+		title : 'Rambo',
+		year : '1900',
 		user : ''
 	} ]
 };
@@ -28,7 +28,7 @@ function hideStart() {
 	$("#user").hide();
 	$("#movie").hide();
 	$("#sliderFrame").slideDown('slow');
-	$("#title").slideDown('slow');
+	$("#heading").slideDown('slow');
 }
 
 function hide(id1, id2, id3) {
@@ -58,9 +58,9 @@ function add() {
 }
 
 function emptyTable() {
-	var k = $('#rediciteF');
+	var k = $('#movieRows');
 	k.empty();
-	var f = $('#rediciteK');
+	var f = $('#userRows');
 	f.empty();
 }
 
@@ -71,10 +71,10 @@ function refresh(m) {
 		var k = m[i];
 		html += constructionTable(i, k);
 		if (activeUsers) {
-			elem('rediciteK').innerHTML = html;
+			elem('userRows').innerHTML = html;
 			hide("#formUser", "#movie", "#user");
 		} else {
-			elem('rediciteF').innerHTML = html;
+			elem('movieRows').innerHTML = html;
 			hide("#formMovie", "#user", "#movie");
 		}
 	}
@@ -84,15 +84,15 @@ function td(s) {
 	return '<td>' + s + '</td>';
 }
 
-function inputVal(ime, prezime, data, tel, god) {
+function inputVal(firstName, lastName, date, tel, year) {
 	if (activeUsers) {
-		$('#imeKorisnici').val(ime);
-		$('#prezimeKorisnici').val(prezime);
-		$('#dataNaRaganje').val(data);
+		$('#firstName').val(firstName);
+		$('#lastName').val(lastName);
+		$('#dateOfBirth').val(date);
 		$('#tel').val(tel);
 	} else {
-		$('#imeFilmovi').val(ime);
-		$('#god').val(god);
+		$('#title').val(firstName);
+		$('#year').val(year);
 	}
 }
 
@@ -100,7 +100,7 @@ function renameUser(i) {
 	var m = model.users;
 	hide('#user', '#submitUser', '#formUser');
 	$('#renameUser').show();
-	inputVal(m[i].ime, m[i].prezime, m[i].data, m[i].tel, '');
+	inputVal(m[i].firstName, m[i].lastName, m[i].date, m[i].tel, '');
 	submit();
 	changed = i;
 	$('#renameUser').click(function() {
@@ -114,7 +114,7 @@ function renameMovie(i) {
 	var m = model.movies;
 	hide('#movie', '#submitMovie', '#formMovie');
 	$('#renameMovie').show();
-	inputVal(m[i].ime, '', '', '', m[i].god);
+	inputVal(m[i].title, '', '', '', m[i].year);
 	submit();
 	changed = i;
 	$('#renameMovie').click(function() {
@@ -146,9 +146,9 @@ function checkboxClick(i) {
 
 function rentMovie(i) {
 	if (model.movies[i].user == '') {
-		model.movies[i].user = model.users[u].ime;
+		model.movies[i].user = model.users[u].firstName;
 		model.users[u].rentedMovies.push({
-			name : model.movies[i].ime,
+			name : model.movies[i].title,
 			dateRent : Date(),
 			dateReturn : ''
 		});
@@ -178,7 +178,7 @@ function showRentedMovies(i) {
 function returnMovies(i) {
 	for (var j = 0; j < model.users.length; j++) {
 		for (var k = 0; k < model.users[j].rentedMovies.length; k++) {
-			if (model.users[j].rentedMovies[k].name == model.movies[i].ime) {
+			if (model.users[j].rentedMovies[k].name == model.movies[i].title) {
 				model.users[j].rentedMovies[k].dateReturn = Date();
 			}
 		}
@@ -198,7 +198,8 @@ function constructionTable(i, pr) {
 				+ ');">';
 		var d = '<button class="btn btn-danger" onclick="del(' + i
 				+ ');">Delete</button>';
-		return '<tr>' + td(pr.ime) + td(pr.prezime) + td(pr.data) + td(pr.tel)
+		return '<tr>' + td(pr.firstName) + td(pr.lastName) + td(pr.date)
+				+ td(pr.tel)
 				+ td(checkbox + ' ' + rentedM + ' ' + edit + ' ' + d) + '</tr>';
 	} else {
 		var edit = '<button class="btn btn-success" onclick="rename(' + i
@@ -209,36 +210,36 @@ function constructionTable(i, pr) {
 				+ ');">Delete</button>';
 		var returnM = '<button class="btn btn-warning" onclick="returnMovies('
 				+ i + ');">Return Movie</button>';
-		return '<tr>' + td(pr.ime) + td(pr.god) + td(pr.user)
+		return '<tr>' + td(pr.title) + td(pr.year) + td(pr.user)
 				+ td(rentMovie + ' ' + returnM + ' ' + edit + ' ' + d)
 				+ '</tr>';
 	}
 }
 
 function dataUser() {
-	var ime = document.getElementById('imeKorisnici').value;
-	var prezime = document.getElementById('prezimeKorisnici').value;
-	var dataNaRaganje = document.getElementById('dataNaRaganje').value;
+	var firstName = document.getElementById('firstName').value;
+	var lastName = document.getElementById('lastName').value;
+	var dateOfBirth = document.getElementById('dateOfBirth').value;
 	var tel = document.getElementById('tel').value;
-	var korisnik = {
-		ime : ime || '',
-		prezime : prezime || '',
-		data : dataNaRaganje || '',
+	var user = {
+		firstName : firstName || '',
+		lastName : lastName || '',
+		date : dateOfBirth || '',
 		tel : tel || '',
 		rentedMovies : []
 	};
-	return korisnik;
+	return user;
 }
 
 function dataMovie() {
-	var ime = document.getElementById('imeFilmovi').value;
-	var god = document.getElementById('god').value;
-	var film = {
-		ime : ime || '',
-		god : god || '',
+	var title = document.getElementById('title').value;
+	var year = document.getElementById('year').value;
+	var movie = {
+		title : title || '',
+		year : year || '',
 		user : ''
 	};
-	return film;
+	return movie;
 }
 
 function submit() {
@@ -267,7 +268,7 @@ function user() {
 	$("#rMov").slideUp('slow');
 	$("#back").slideUp('slow');
 	$("#sliderFrame").slideUp('slow');
-	$("#title").slideUp('slow');
+	$("#heading").slideUp('slow');
 	refresh(checkModel());
 	$(".searchFormMovie").hide();
 	$(".searchFormUser").show();
@@ -281,7 +282,7 @@ function movie() {
 	$("#rMov").slideUp('slow');
 	$("#back").slideUp('slow');
 	$("#sliderFrame").slideUp('slow');
-	$("#title").slideUp('slow');
+	$("#heading").slideUp('slow');
 	refresh(checkModel());
 	$(".searchFormUser").hide();
 	$(".searchFormMovie").show();
@@ -296,30 +297,30 @@ function val(id) {
 }
 
 function searchUser() {
-	elem('rediciteK').innerHTML = '';
-	var filter = val('prebaruvajKorisnik');
+	elem('userRows').innerHTML = '';
+	var filter = val('searchU');
 	for (var j = 0; j < model.users.length; j++) {
 		var k = model.users[j];
-		var a = k.ime.substring(0, filter.length);
-		var b = k.prezime.substring(0, filter.length);
+		var a = k.firstName.substring(0, filter.length);
+		var b = k.lastName.substring(0, filter.length);
 		var c = k.tel.substring(0, filter.length);
 		if (a == filter || b == filter) {
-			elem('rediciteK').innerHTML += constructionTable(j, k);
+			elem('userRows').innerHTML += constructionTable(j, k);
 		}
-		elem('prebaruvajKorisnik').value = '';
+		elem('searchU').value = '';
 	}
 }
 
 function searchMovie() {
-	elem('rediciteF').innerHTML = '';
-	var filter = val('prebaruvajFilm');
+	elem('movieRows').innerHTML = '';
+	var filter = val('searchM');
 	for (var j = 0; j < model.movies.length; j++) {
 		var f = model.movies[j];
-		var a = f.ime.substring(0, filter.length);
+		var a = f.title.substring(0, filter.length);
 		if (a == filter) {
-			elem('rediciteF').innerHTML += constructionTable(j, f);
+			elem('movieRows').innerHTML += constructionTable(j, f);
 		}
-		elem('prebaruvajFilm').value = '';
+		elem('searchM').value = '';
 	}
 }
 
