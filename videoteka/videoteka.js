@@ -1,4 +1,4 @@
-var lSub = localStorage.lastSubmit;
+var lSub = localStorage.lSubmit;
 model = lSub ? JSON.parse(lSub) : {
 	users : [ {
 		firstName : 'Marina',
@@ -49,9 +49,19 @@ function checkModel() {
 function add() {
 	var m = checkModel();
 	if (activeUsers) {
+		if ($('#firstName').val() == '' || $('#lastName').val() == ''
+				|| $('#dateOfBirth').val() == '' || $('#tel').val() == '') {
+			return;
+		}
 		m.push(dataUser());
+		$(".searchFormUser").show();
 	} else {
+		if ($('#title').val() == '' || $('#year').val() == '') {
+			return;
+		}
 		m.push(dataMovie());
+		$(".searchFormMovie").show();
+
 	}
 	submit();
 	refresh(m);
@@ -243,7 +253,7 @@ function dataMovie() {
 }
 
 function submit() {
-	localStorage.lastSubmit = JSON.stringify(model);
+	localStorage.lSubmit = JSON.stringify(model);
 }
 
 function newUser() {
@@ -251,6 +261,8 @@ function newUser() {
 	$("#movie").hide();
 	$('#submitUser').show();
 	inputVal('', '', '', '', '');
+	$(".searchFormUser").hide();
+
 }
 
 function newMovie() {
@@ -258,6 +270,7 @@ function newMovie() {
 	$("#user").hide();
 	$('#submitMovie').show();
 	inputVal('', '', '', '', '');
+	$(".searchFormMovie").hide();
 }
 
 function user() {
@@ -331,8 +344,6 @@ function del(n) {
 	refresh(m);
 }
 
-hideStart();
-
 $(function() {
 	$('.click-nav > ul').toggleClass('no-js js');
 	$('.click-nav .js ul').hide();
@@ -348,3 +359,89 @@ $(function() {
 		}
 	});
 });
+
+$(document)
+		.ready(
+				function() {
+					$('#contactFormUser')
+							.bootstrapValidator(
+									{
+										container : '#messagesU',
+										feedbackIcons : {
+											valid : 'glyphicon glyphicon-ok',
+											invalid : 'glyphicon glyphicon-remove',
+											validating : 'glyphicon glyphicon-refresh'
+										},
+
+										fields : {
+											firstName : {
+												validators : {
+													notEmpty : {
+														message : 'The first name is required and cannot be empty'
+													}
+												}
+											},
+											lastName : {
+												validators : {
+													notEmpty : {
+														message : 'The last name is required and cannot be empty'
+													},
+												}
+											},
+											date : {
+												validators : {
+													notEmpty : {
+														message : 'The date is required and cannot be empty'
+													},
+													regexp : {
+														regexp : /^[\d\.\\/-]+$/
+													},
+												}
+											},
+											phone : {
+												validators : {
+													notEmpty : {
+														message : 'The phone is required and cannot be empty'
+													},
+													regexp : {
+														regexp : /^[\d\/\-]+$/
+													},
+												}
+											}
+										}
+									});
+
+					$('#contactFormMovie')
+							.bootstrapValidator(
+									{
+										container : '#messagesM',
+										feedbackIcons : {
+											valid : 'glyphicon glyphicon-ok',
+											invalid : 'glyphicon glyphicon-remove',
+											validating : 'glyphicon glyphicon-refresh'
+										},
+
+										fields : {
+											title : {
+												validators : {
+													notEmpty : {
+														message : 'The title is required and cannot be empty'
+													}
+												}
+											},
+											year : {
+												validators : {
+													notEmpty : {
+														message : 'The year is required and cannot be empty'
+													},
+													regexp : {
+														regexp : /^[\d\.\\/-]+$/
+													},
+												}
+											},
+										}
+									});
+
+				});
+
+hideStart();
