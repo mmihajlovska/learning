@@ -54,17 +54,14 @@ function add() {
 			return;
 		}
 		m.push(dataUser());
-		$(".searchFormUser").show();
 	} else {
 		if ($('#title').val() == '' || $('#year').val() == '') {
 			return;
 		}
 		m.push(dataMovie());
-		$(".searchFormMovie").show();
 
 	}
 	submit();
-	refresh(m);
 }
 
 function emptyTable() {
